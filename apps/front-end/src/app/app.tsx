@@ -4,28 +4,31 @@ import { SidebarProvider } from '../contexts/SidebarContext';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { Login } from '../pages/Login/Login';
 import { Dashboard } from '../pages/Dashboard/Dashboard';
+import { GlobalErrorBoundary } from './GlobalErrorBoundary';
 import './app.module.css';
 
 export function App() {
   return (
-    <AuthProvider>
-      <SidebarProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-        </BrowserRouter>
-      </SidebarProvider>
-    </AuthProvider>
+    <GlobalErrorBoundary>
+      <AuthProvider>
+        <SidebarProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </BrowserRouter>
+        </SidebarProvider>
+      </AuthProvider>
+    </GlobalErrorBoundary>
   );
 }
 

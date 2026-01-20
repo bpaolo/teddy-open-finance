@@ -348,6 +348,21 @@ O projeto possui **32 testes unitários passantes**:
 - **Backend:** 18 testes cobrindo serviços, DTOs e controllers
 - **Frontend:** 14 testes cobrindo componentes, hooks e páginas
 
+### Rodar a Verificação Total
+
+Após fazer correções ou alterações no código, execute o comando abaixo para verificar que todos os "checks" estão verdes (lint, testes e build):
+
+```bash
+npx nx run-many -t lint test build --all
+```
+
+Este comando executa em paralelo:
+- ✅ **Lint** - Verifica qualidade e padrões do código
+- ✅ **Test** - Executa todos os testes unitários
+- ✅ **Build** - Valida que o código compila corretamente
+
+É recomendado executar este comando antes de fazer commit ou abrir um pull request.
+
 ## 🔍 Observabilidade
 
 ### Health Check (`/healthz`)

@@ -42,9 +42,13 @@ describe('Integração: Fluxo Completo da Aplicação', () => {
     // Tentar abrir detalhes do primeiro cliente
     cy.get('.shared-client-card')
       .first()
+      .should('be.visible')
       .within(() => {
-        // Tentar clicar no nome do cliente ou no card
-        cy.get('.client-card-name').click({ force: true });
+        // Aguardar que o elemento esteja visível e interagível antes de clicar
+        cy.get('.client-card-name')
+          .should('be.visible')
+          .should('not.be.disabled')
+          .click();
       });
 
     // Aguardar modal ou mudança de URL

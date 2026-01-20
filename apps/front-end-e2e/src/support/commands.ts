@@ -44,13 +44,3 @@ Cypress.Commands.add('login', (email: string, password: string) => {
   // Aguardar que o dashboard carregue completamente
   cy.contains(/clientes encontrados|cliente encontrado/i, { timeout: 10000 }).should('be.visible');
 });
-
-declare global {
-  namespace Cypress {
-    interface Chainable {
-      login(email: string, password: string): Chainable<void>;
-    }
-  }
-}
-
-export {};
