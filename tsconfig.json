@@ -32,6 +32,18 @@
     },
     {
       "path": "./libs/shared/test-utils"
+    },
+    {
+      "path": "./apps/back-end-e2e"
+    },
+    {
+      "path": "./apps/back-end"
+    },
+    {
+      "path": "./apps/front-end-e2e"
+    },
+    {
+      "path": "./apps/front-end"
     }
   ]
 }
