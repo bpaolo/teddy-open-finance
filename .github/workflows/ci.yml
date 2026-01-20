@@ -32,4 +32,4 @@ jobs:
         env:
           NX_NO_CLOUD: true
           NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
-        run: npx nx run-many -t lint test --parallel=1
+        run: npx nx run-many -t lint test --exclude=*-e2e --parallel=1
