@@ -1,7 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Client } from '../../../types/client.types';
-import { Button } from '../Button/Button';
-import minusIcon from '../../../assets/images/minus-svgrepo-com.png';
 import './ClientCard.css';
 
 interface ClientCardProps {
@@ -21,9 +20,26 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   deleteLoading,
   isSelected = false,
 }) => {
+  const navigate = useNavigate();
+
+  const handleViewDetails = () => {
+    navigate(`/dashboard/clients/${client.id}`);
+  };
+
   return (
     <div className={`shared-client-card ${isSelected ? 'client-card-selected' : ''}`}>
-      <h3 className="client-card-name">{client.nome}</h3>
+      <div className="client-card-header">
+        {onSelect && (
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() => onSelect(client)}
+            className="client-card-checkbox"
+            aria-label={`Selecionar ${client.nome}`}
+          />
+        )}
+        <h3 className="client-card-name">{client.nome}</h3>
+      </div>
 
       <div className="client-card-body">
         <p className="client-card-info-line">
@@ -32,22 +48,19 @@ export const ClientCard: React.FC<ClientCardProps> = ({
         <p className="client-card-info-line">
           Telefone: {client.telefone || 'N/A'}
         </p>
+        <p className="client-card-info-line">
+          Acessos: {client.access_count || 0}
+        </p>
       </div>
 
       <div className="client-card-actions">
-        {onSelect && (
-          <button
-            className={`client-card-action-btn ${isSelected ? 'selected' : ''}`}
-            onClick={() => onSelect(client)}
-            title={isSelected ? 'Remover dos selecionados' : 'Adicionar aos selecionados'}
-          >
-            {isSelected ? (
-              <img src={minusIcon} alt="Remover" className="action-icon" />
-            ) : (
-              <span>+</span>
-            )}
-          </button>
-        )}
+        <button
+          className="client-card-action-btn client-card-view-btn"
+          onClick={handleViewDetails}
+          title="Ver detalhes"
+        >
+          👁️
+        </button>
         <button
           className="client-card-action-btn client-card-edit-btn"
           onClick={() => onEdit(client)}

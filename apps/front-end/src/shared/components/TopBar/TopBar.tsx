@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useSidebar } from '../../../contexts/SidebarContext';
+import { useSelectedClients } from '../../../hooks/useSelectedClients';
 import logo from '../../../assets/images/teddy-logo.png';
 import './TopBar.css';
 
@@ -10,13 +11,27 @@ export interface TopBarProps {
 }
 
 export const TopBar: React.FC<TopBarProps> = ({ className = '' }) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { toggle } = useSidebar();
   const navigate = useNavigate();
   const location = useLocation();
+  const { selectedClients } = useSelectedClients();
   
   const userName = user?.nome || user?.email || 'Usuário';
   const isSelectedPage = location.search.includes('selected');
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const handleSelectedClientsClick = () => {
+    if (selectedClients.length > 0) {
+      const clientNames = selectedClients.map(c => c.nome).join(', ');
+      alert(`Clientes selecionados (${selectedClients.length}):\n\n${clientNames}`);
+    }
+    navigate('/dashboard?selected=true');
+  };
 
   return (
     <div className={`shared-topbar ${className}`}>
@@ -53,17 +68,16 @@ export const TopBar: React.FC<TopBarProps> = ({ className = '' }) => {
         </button>
         <button
           className={`topbar-nav-link ${isSelectedPage ? 'active' : ''}`}
-          onClick={() => navigate('/dashboard?selected=true')}
+          onClick={handleSelectedClientsClick}
         >
           Clientes selecionados
+          {selectedClients.length > 0 && (
+            <span className="topbar-badge"> ({selectedClients.length})</span>
+          )}
         </button>
         <button
           className="topbar-nav-link"
-          onClick={() => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            navigate('/login');
-          }}
+          onClick={handleLogout}
         >
           Sair
         </button>

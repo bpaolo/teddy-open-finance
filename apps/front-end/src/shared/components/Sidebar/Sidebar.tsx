@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSidebar } from '../../../contexts/SidebarContext';
+import { useSelectedClients } from '../../../hooks/useSelectedClients';
 import logo from '../../../assets/images/teddy-logo.png';
 import './Sidebar.css';
 
@@ -17,6 +18,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
   const { isOpen, close } = useSidebar();
   const navigate = useNavigate();
   const location = useLocation();
+  const { selectedClients } = useSelectedClients();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -38,8 +40,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
 
   if (!isOpen) return null;
 
-  const isClientesActive = isActive('/dashboard') && !location.search.includes('selected');
-  const isClientesSelecionadosActive = location.search.includes('selected');
+  // Determinar qual rota está ativa
+  const isDashboardActive = location.pathname === '/dashboard' && !location.search.includes('selected');
+  const isClientesSelecionadosActive = location.pathname === '/dashboard' && location.search.includes('selected');
+  const isClientDetailsActive = location.pathname.startsWith('/dashboard/clients/');
 
   return (
     <aside
@@ -69,7 +73,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
 
       <nav className="sidebar-nav">
         <button
-          className={`sidebar-nav-item ${isActive('/dashboard') && !isClientesSelecionadosActive ? 'active' : ''}`}
+          className={`sidebar-nav-item ${isDashboardActive ? 'active' : ''}`}
           onClick={() => handleNavigate('/dashboard')}
         >
           <svg
@@ -91,7 +95,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
         </button>
 
         <button
-          className={`sidebar-nav-item ${isClientesActive ? 'active' : ''}`}
+          className={`sidebar-nav-item ${(isDashboardActive || isClientDetailsActive) && !isClientesSelecionadosActive ? 'active' : ''}`}
           onClick={() => handleNavigate('/dashboard')}
         >
           <svg
@@ -150,7 +154,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
               strokeLinejoin="round"
             />
           </svg>
-          <span>Clientes selecionados</span>
+          <span>
+            Clientes selecionados
+            {selectedClients.length > 0 && (
+              <span className="sidebar-badge"> ({selectedClients.length})</span>
+            )}
+          </span>
         </button>
       </nav>
     </aside>

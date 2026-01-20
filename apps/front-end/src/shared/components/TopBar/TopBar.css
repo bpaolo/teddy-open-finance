@@ -79,6 +79,12 @@
   color: var(--color-text-primary);
 }
 
+.topbar-badge {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+  margin-left: 4px;
+}
+
 @media (max-width: 768px) {
   .shared-topbar {
     padding: var(--spacing-md) var(--spacing-lg);

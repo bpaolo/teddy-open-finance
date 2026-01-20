@@ -4,6 +4,7 @@ import { SidebarProvider } from '../contexts/SidebarContext';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { Login } from '../pages/Login/Login';
 import { Dashboard } from '../pages/Dashboard/Dashboard';
+import { ClientDetails } from '../pages/ClientDetails/ClientDetails';
 import { GlobalErrorBoundary } from './GlobalErrorBoundary';
 import './app.module.css';
 
@@ -20,6 +21,14 @@ export function App() {
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard/clients/:id"
+                element={
+                  <ProtectedRoute>
+                    <ClientDetails />
                   </ProtectedRoute>
                 }
               />

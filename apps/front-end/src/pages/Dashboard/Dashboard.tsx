@@ -25,7 +25,7 @@ export const Dashboard: React.FC = () => {
   } = useClients();
 
   const { viewClient } = useSelectedClient();
-  const { selectedClients, isSelected, toggleSelection, clearSelection } =
+  const { selectedClients, isSelected, toggleSelection, clearSelection, selectAll } =
     useSelectedClients();
 
   const [editClient, setEditClient] = useState<Client | null>(null);
@@ -123,9 +123,27 @@ export const Dashboard: React.FC = () => {
 
         <div className="dashboard-section">
           <div className="dashboard-clients-header">
-            <h2 className="dashboard-clients-count">
-              {clientsToDisplay.length} {clientsToDisplay.length === 1 ? 'cliente encontrado' : 'clientes encontrados'}:
-            </h2>
+            <div className="dashboard-clients-header-top">
+              <h2 className="dashboard-clients-count">
+                {clientsToDisplay.length} {clientsToDisplay.length === 1 ? 'cliente encontrado' : 'clientes encontrados'}:
+              </h2>
+              {!showSelected && displayedClients.length > 0 && (
+                <label className="dashboard-select-all">
+                  <input
+                    type="checkbox"
+                    checked={selectedClients.length === displayedClients.length && displayedClients.length > 0}
+                    onChange={() => {
+                      if (selectedClients.length === displayedClients.length) {
+                        clearSelection();
+                      } else {
+                        selectAll(displayedClients);
+                      }
+                    }}
+                  />
+                  <span>Selecionar todos</span>
+                </label>
+              )}
+            </div>
             {clientsToDisplay.length > itemsPerPage && (
               <Pagination
                 currentPage={currentPage}
@@ -147,7 +165,7 @@ export const Dashboard: React.FC = () => {
               </p>
               <p className="dashboard-empty-subtitle">
                 {showSelected
-                  ? 'Selecione clientes usando o botão + nos cards.'
+                  ? 'Selecione clientes usando os checkboxes nos cards.'
                   : 'Os clientes aparecerão aqui quando forem cadastrados.'}
               </p>
             </div>

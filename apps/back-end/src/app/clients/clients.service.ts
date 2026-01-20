@@ -45,6 +45,7 @@ export class ClientsService {
   }
 
   async findOne(id: string): Promise<Client> {
+    // Primeiro verificar se o cliente existe
     const client = await this.clientsRepository.findOne({
       where: { id },
     });
@@ -53,11 +54,15 @@ export class ClientsService {
       throw new NotFoundException(`Cliente com ID ${id} não encontrado`);
     }
 
-    // Incrementar access_count
-    client.access_count += 1;
-    await this.clientsRepository.save(client);
+    // Incrementar access_count usando SQL direto (mais eficiente e thread-safe)
+    await this.clientsRepository.increment({ id }, 'access_count', 1);
 
-    return client;
+    // Buscar o cliente atualizado após o incremento
+    const updatedClient = await this.clientsRepository.findOne({
+      where: { id },
+    });
+
+    return updatedClient!;
   }
 
   async update(id: string, updateClientDto: UpdateClientDto): Promise<Client> {
