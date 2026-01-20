@@ -1,0 +1,87 @@
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+.input-label {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-normal);
+}
+
+.input {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  transition: all var(--transition-base);
+  width: 100%;
+}
+
+/* Input Login - Dimensões específicas do Figma */
+.input-login {
+  width: 521px;
+  height: 60px;
+  border: 2px solid #D9D9D9 !important;
+  border-radius: var(--radius-sm);
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.input-login:focus {
+  border-color: var(--color-primary) !important;
+  border-width: 2px !important;
+}
+
+.input-login.input-error {
+  border-color: var(--color-error) !important;
+  border-width: 2px !important;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(236, 103, 36, 0.1);
+}
+
+.input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.input-error {
+  border-color: var(--color-error);
+}
+
+.input-error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.input-error-message {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  line-height: var(--line-height-normal);
+}
+
+.input-helper-text {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-normal);
+}

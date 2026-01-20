@@ -1,0 +1,94 @@
+.shared-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 var(--spacing-xl);
+}
+
+.pagination-items-per-page {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.pagination-items-per-page label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.pagination-select {
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.pagination-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(236, 103, 36, 0.1);
+}
+
+.pagination-pages {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.pagination-page-btn {
+  min-width: 35px;
+  height: 35px;
+  padding: 0 var(--spacing-sm);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family-base);
+}
+
+.pagination-page-btn:hover:not(.active) {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary);
+}
+
+.pagination-page-btn.active {
+  background: #0066CC;
+  color: white;
+  border-color: #0066CC;
+}
+
+.pagination-ellipsis {
+  padding: 0 var(--spacing-xs);
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-base);
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .shared-pagination {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .pagination-pages {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}

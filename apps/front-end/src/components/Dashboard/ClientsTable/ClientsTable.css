@@ -1,0 +1,66 @@
+.clients-table-container {
+  /* Card já aplica padding e estilos base */
+}
+
+.clients-table-title {
+  margin: 0 0 var(--spacing-lg) 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-normal);
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.clients-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.clients-table thead {
+  background-color: var(--color-background);
+}
+
+.clients-table th {
+  padding: var(--spacing-md);
+  text-align: left;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.clients-table td {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.clients-table tbody tr:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.access-count {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(236, 103, 36, 0.1);
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xs);
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--color-text-tertiary);
+  font-style: italic;
+}

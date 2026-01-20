@@ -1,0 +1,68 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background);
+  padding: var(--spacing-lg);
+}
+
+.login-loading {
+  text-align: center;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+}
+
+.login-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-2xl);
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Texto "Olá, seja bem-vindo!" - Tipografia do Figma */
+.login-welcome {
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  text-align: center;
+  line-height: var(--line-height-tight);
+}
+
+.login-subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--spacing-xl) 0;
+  text-align: center;
+  font-weight: var(--font-weight-normal);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+  width: 100%;
+}
+
+/* Responsivo - em telas menores, inputs e botões ocupam 100% */
+@media (max-width: 600px) {
+  .login-card {
+    padding: var(--spacing-lg);
+  }
+
+  .input-login {
+    width: 100% !important;
+    max-width: 521px;
+  }
+
+  .btn-login {
+    width: 100% !important;
+    max-width: 521px;
+  }
+}

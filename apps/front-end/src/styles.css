@@ -1,0 +1,16 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Import Design Tokens */
+@import './styles/design-tokens.css';
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-background);
+}

@@ -1,0 +1,88 @@
+/* Input Component - Atomic Design */
+.shared-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+.shared-input-label {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-normal);
+}
+
+.shared-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.shared-input-icon {
+  position: absolute;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+  z-index: 1;
+}
+
+.shared-input {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  transition: all var(--transition-base);
+  width: 100%;
+}
+
+.shared-input-container .shared-input-icon + .shared-input {
+  padding-left: 40px;
+}
+
+.shared-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(236, 103, 36, 0.1);
+}
+
+.shared-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.shared-input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.shared-input-error {
+  border-color: var(--color-error);
+}
+
+.shared-input-error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.shared-input-error-message {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  line-height: var(--line-height-normal);
+}
+
+.shared-input-helper-text {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-normal);
+}

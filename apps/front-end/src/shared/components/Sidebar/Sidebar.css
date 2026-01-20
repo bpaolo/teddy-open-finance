@@ -1,0 +1,129 @@
+/* Sidebar Component - Atomic Design (Organism) */
+.shared-sidebar {
+  width: 260px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  box-shadow: var(--shadow-md);
+  border-right: 1px solid var(--color-border);
+  z-index: 1000;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.shared-sidebar.sidebar-open {
+  transform: translateX(0);
+}
+
+.sidebar-header {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 128px;
+  background: #3c3c3c;
+}
+
+.sidebar-close-btn {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.sidebar-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-logo {
+  width: 100px;
+  height: 48px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.sidebar-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: rgba(255, 255, 255, 0.9);
+  line-height: var(--line-height-tight);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-family-base);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-align: left;
+  border-radius: 4px;
+  position: relative;
+}
+
+.sidebar-nav-item:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.sidebar-nav-item.active {
+  color: var(--color-primary);
+}
+
+.sidebar-nav-item.active svg {
+  color: var(--color-primary);
+}
+
+.sidebar-nav-item.active::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: var(--color-primary);
+  border-radius: 2px 0 0 2px;
+}
+
+.sidebar-nav-item svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+.sidebar-nav-item span {
+  flex: 1;
+}
