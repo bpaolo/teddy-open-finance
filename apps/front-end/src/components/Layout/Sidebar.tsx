@@ -8,8 +8,14 @@ export const Sidebar: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    // Limpar dados sensíveis e estado de autenticação
     logout();
-    navigate('/login');
+    
+    // Redirecionar para login e substituir histórico para evitar voltar
+    navigate('/login', { replace: true });
+    
+    // Forçar reload da página para garantir limpeza completa de estado
+    window.location.href = '/login';
   };
 
   return (

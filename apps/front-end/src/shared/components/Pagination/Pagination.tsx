@@ -26,40 +26,49 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   const getPageNumbers = () => {
     const pageNumbers: (number | string)[] = [];
-    const maxPagesToShow = 5;
 
-    if (totalPages <= maxPagesToShow) {
+    if (totalPages <= 7) {
+      // Se há 7 ou menos páginas, mostrar todas
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
       }
     } else {
+      // Sempre mostrar primeira página
       pageNumbers.push(1);
 
-      if (currentPage > 3) {
-        pageNumbers.push('...');
-      }
-
+      // Determinar páginas ao redor da atual
       let startPage = Math.max(2, currentPage - 1);
       let endPage = Math.min(totalPages - 1, currentPage + 1);
 
+      // Ajustar quando está no início
       if (currentPage <= 3) {
         startPage = 2;
         endPage = Math.min(4, totalPages - 1);
-      } else if (currentPage > totalPages - 3) {
+      }
+      // Ajustar quando está no fim
+      else if (currentPage >= totalPages - 2) {
         startPage = Math.max(2, totalPages - 3);
         endPage = totalPages - 1;
       }
 
+      // Adicionar ellipsis antes se necessário
+      if (startPage > 2) {
+        pageNumbers.push('...');
+      }
+
+      // Adicionar páginas ao redor da atual
       for (let i = startPage; i <= endPage; i++) {
         if (i !== 1 && i !== totalPages) {
           pageNumbers.push(i);
         }
       }
 
-      if (currentPage < totalPages - 2) {
+      // Adicionar ellipsis depois se necessário
+      if (endPage < totalPages - 1) {
         pageNumbers.push('...');
       }
 
+      // Sempre mostrar última página
       if (totalPages > 1) {
         pageNumbers.push(totalPages);
       }
@@ -70,28 +79,12 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <div className="shared-pagination">
-      <div className="pagination-items-per-page">
-        <label htmlFor="items-per-page">Clientes por página:</label>
-        <select
-          id="items-per-page"
-          value={itemsPerPage}
-          onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-          className="pagination-select"
-        >
-          {itemsPerPageOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      </div>
-
       <div className="pagination-pages">
         {getPageNumbers().map((page, index) => {
           if (typeof page === 'number') {
             return (
               <button
-                key={index}
+                key={`page-${page}-${index}`}
                 className={`pagination-page-btn ${page === currentPage ? 'active' : ''}`}
                 onClick={() => onPageChange(page)}
               >
@@ -100,7 +93,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             );
           } else {
             return (
-              <span key={index} className="pagination-ellipsis">
+              <span key={`ellipsis-${index}`} className="pagination-ellipsis">
                 {page}
               </span>
             );

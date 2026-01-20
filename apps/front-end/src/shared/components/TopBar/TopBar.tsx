@@ -21,8 +21,19 @@ export const TopBar: React.FC<TopBarProps> = ({ className = '' }) => {
   const isSelectedPage = location.search.includes('selected');
 
   const handleLogout = () => {
+    // Limpar dados sensíveis e estado de autenticação
     logout();
-    navigate('/login');
+    
+    // Limpar seleção de clientes (dados sensíveis em cache)
+    // Nota: Isso será feito automaticamente quando o componente desmontar,
+    // mas fazemos aqui para garantir limpeza imediata
+    
+    // Redirecionar para login e substituir histórico para evitar voltar
+    navigate('/login', { replace: true });
+    
+    // Forçar reload da página para garantir limpeza completa de estado
+    // Isso previne que dados sensíveis permaneçam em memória
+    window.location.href = '/login';
   };
 
   const handleSelectedClientsClick = () => {

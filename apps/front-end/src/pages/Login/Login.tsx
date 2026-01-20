@@ -27,8 +27,17 @@ export const Login: React.FC = () => {
   });
 
   React.useEffect(() => {
+    // Limpar qualquer estado residual ao entrar na página de login
+    // Garantir que não há dados sensíveis em cache
+    const token = localStorage.getItem('token');
+    if (!token) {
+      // Se não há token, garantir que localStorage está limpo
+      localStorage.removeItem('user');
+      sessionStorage.clear();
+    }
+
     if (!authLoading && isAuthenticated) {
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     }
   }, [isAuthenticated, authLoading, navigate]);
 

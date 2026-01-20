@@ -117,15 +117,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(userData);
   };
 
-  // Função de logout
+  // Função de logout completa
   const logout = (): void => {
-    // Limpar localStorage
+    // Limpar todos os dados sensíveis do localStorage
     localStorage.removeItem('token');
     localStorage.removeItem('user');
 
-    // Limpar estado
+    // Limpar sessionStorage se houver dados sensíveis
+    sessionStorage.clear();
+
+    // Limpar estado de autenticação
     setToken(null);
     setUser(null);
+
+    // Limpar cache do navegador relacionado à autenticação
+    // Isso garante que dados sensíveis não fiquem em cache
+    if ('caches' in window) {
+      caches.keys().then((names) => {
+        names.forEach((name) => {
+          caches.delete(name);
+        });
+      });
+    }
   };
 
   const value: AuthContextType = {

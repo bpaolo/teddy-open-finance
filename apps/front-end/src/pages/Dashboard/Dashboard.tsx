@@ -31,7 +31,7 @@ export const Dashboard: React.FC = () => {
   const [editClient, setEditClient] = useState<Client | null>(null);
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(16);
 
   const displayedClients = useMemo(() => {
     const filtered = showSelected ? selectedClients : clients;
@@ -127,33 +127,40 @@ export const Dashboard: React.FC = () => {
               <h2 className="dashboard-clients-count">
                 {clientsToDisplay.length} {clientsToDisplay.length === 1 ? 'cliente encontrado' : 'clientes encontrados'}:
               </h2>
-              {!showSelected && displayedClients.length > 0 && (
-                <label className="dashboard-select-all">
-                  <input
-                    type="checkbox"
-                    checked={selectedClients.length === displayedClients.length && displayedClients.length > 0}
-                    onChange={() => {
-                      if (selectedClients.length === displayedClients.length) {
-                        clearSelection();
-                      } else {
-                        selectAll(displayedClients);
-                      }
-                    }}
-                  />
-                  <span>Selecionar todos</span>
-                </label>
-              )}
+              <div className="dashboard-header-actions">
+                {!showSelected && displayedClients.length > 0 && (
+                  <label className="dashboard-select-all">
+                    <input
+                      type="checkbox"
+                      checked={selectedClients.length === displayedClients.length && displayedClients.length > 0}
+                      onChange={() => {
+                        if (selectedClients.length === displayedClients.length) {
+                          clearSelection();
+                        } else {
+                          selectAll(displayedClients);
+                        }
+                      }}
+                    />
+                    <span>Selecionar todos</span>
+                  </label>
+                )}
+                {!showSelected && (
+                  <label className="dashboard-items-per-page">
+                    <span>Clientes por página:</span>
+                    <select
+                      value={itemsPerPage}
+                      onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                      className="dashboard-items-select"
+                    >
+                      <option value={16}>16</option>
+                      <option value={32}>32</option>
+                      <option value={48}>48</option>
+                      <option value={64}>64</option>
+                    </select>
+                  </label>
+                )}
+              </div>
             </div>
-            {clientsToDisplay.length > itemsPerPage && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                itemsPerPage={itemsPerPage}
-                totalItems={clientsToDisplay.length}
-                onPageChange={setCurrentPage}
-                onItemsPerPageChange={setItemsPerPage}
-              />
-            )}
           </div>
 
           {clientsToDisplay.length === 0 ? (

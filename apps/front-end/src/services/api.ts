@@ -30,12 +30,19 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Se receber 401 (Unauthorized), pode limpar o token e redirecionar
+    // Se receber 401 (Unauthorized), limpar todos os dados sensíveis e redirecionar
     if (error.response?.status === 401) {
+      // Limpar localStorage
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      // Opcional: redirecionar para login
-      // window.location.href = '/login';
+      
+      // Limpar sessionStorage
+      sessionStorage.clear();
+      
+      // Redirecionar para login apenas se não estiver já na página de login
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     
     return Promise.reject(error);
