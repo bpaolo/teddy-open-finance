@@ -540,3 +540,38 @@ npx nx run-many --target=build --all --prod
 ## 📄 Licença
 
 MIT
+
+---
+
+## 🌐 Arquitetura Cloud Proposta (AWS)
+
+Para levar esta solução ao ambiente de produção seguindo padrões de alta disponibilidade, propomos a seguinte arquitetura na AWS:
+
+```mermaid
+graph LR
+    User((Usuário)) --> R53[Route 53]
+    R53 --> CF[CloudFront]
+    CF --> ALB[Application Load Balancer]
+    ALB --> ECS[ECS Fargate Cluster]
+    ECS --> RDS[(Amazon RDS Postgres)]
+    ECS --> Redis[(ElastiCache Redis)]
+    ECS --> CW[CloudWatch & X-Ray]
+```
+
+### 💎 Pilares da Implementação
+
+- **Escalabilidade**: O uso de **AWS Fargate** permite o escalonamento horizontal automático (Auto Scaling) dos containers de **Backend** e **Frontend** conforme a demanda, sem a necessidade de gerenciar instâncias EC2 ou capacity planning manual. As tasks podem escalar com base em métricas como CPU, memória ou latência.
+
+- **Segurança**:
+  - **Isolamento**: Banco de dados em **sub-redes privadas** dentro de uma **VPC**, protegido por **Security Groups** que só permitem tráfego a partir dos serviços ECS.
+  - **Edge Protection**: **AWS WAF** acoplado ao **CloudFront** para mitigar ataques como SQL Injection, XSS e tentativas de DDoS na borda.
+  - **Secrets**: Armazenamento seguro de credenciais sensíveis (credenciais do RDS, chaves **JWT**, segredos de API) via **AWS Secrets Manager**, evitando exposição em variáveis de ambiente estáticas ou código-fonte.
+
+- **Observabilidade**:
+  - **Centralized Logging**: Ingestão dos logs JSON do backend (Pino / nestjs-pino) diretamente em **CloudWatch Logs**, permitindo criação de dashboards, métricas derivadas e alarmes.
+  - **Tracing**: Integração com **AWS X-Ray** para rastrear requisições ponta-a-ponta, identificando gargalos entre o serviço **NestJS** e o **PostgreSQL (RDS)**, além de mapear dependências entre serviços.
+
+### 🧠 Justificativa Sênior: Por que Fargate em vez de EC2?
+
+A escolha por **ECS Fargate** em vez de instâncias fixas **EC2** reduz drasticamente o **overhead operacional**: não é necessário gerenciar patching de SO, capacity planning fino ou auto-scaling por instância. Cada service é descrito como um conjunto de containers imutáveis, versionados pela pipeline de CI/CD, o que aumenta a **agilidade de deploy** e rollback. Em um contexto de MVP evoluindo para produção, essa abordagem **container-first** permite crescer de forma previsível, mantendo custos sob controle e liberando o time para focar em regra de negócio em vez de gestão de infraestrutura de baixo nível.
+
