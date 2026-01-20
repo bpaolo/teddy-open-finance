@@ -1,260 +1,527 @@
-# Nx React Repository
+# Teddy Open Finance
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+Monorepo Nx para a plataforma Teddy Open Finance - Sistema de gestão financeira com arquitetura moderna e observabilidade completa.
 
-✨ A repository showcasing key [Nx](https://nx.dev) features for React monorepos ✨
+## 📋 Visão Geral
 
-## 📦 Project Overview
+Este projeto é um monorepo gerenciado pelo **Nx** que contém:
 
-This repository demonstrates a production-ready React monorepo with:
+- **Backend** (`apps/back-end`): API REST desenvolvida com NestJS, TypeORM e PostgreSQL
+- **Frontend** (`apps/front-end`): Aplicação React desenvolvida com Vite
+- **Bibliotecas compartilhadas** (`libs/`): Código reutilizável entre aplicações
 
-- **2 Applications**
+### 🎯 Diferenciais Técnicos
 
-  - `shop` - React e-commerce application with product listings and detail views
-  - `api` - Backend API serving product data
+- ✅ **32 testes unitários passantes** cobrindo backend e frontend
+- ✅ **Health Check** (`/healthz`) com verificação de banco de dados e memória
+- ✅ **Observabilidade completa**: Logs estruturados em JSON, métricas Prometheus
+- ✅ **Arquitetura profissional**: Separação clara de responsabilidades, Docker isolado por app
+- ✅ **Documentação técnica**: README específico para cada aplicação
 
-- **7 Libraries**
+## 🏗️ Arquitetura do Sistema
 
-  - `@org/shop-feature-products` - Product listing feature (React)
-  - `@org/shop-feature-product-detail` - Product detail feature (React)
-  - `@org/shop-data` - Data access layer for shop features
-  - `@org/shop-shared-ui` - Shared UI components
-  - `@org/models` - Shared data models
-  - `@org/api-products` - API product service library
-  - `@org/shared-test-utils` - Shared testing utilities
+```mermaid
+graph TB
+    User[👤 Usuário] -->|HTTP/HTTPS| Frontend[React + Vite<br/>Frontend<br/>:5173]
+    Frontend -->|REST API<br/>JWT Auth| Backend[NestJS<br/>Backend API<br/>:3000]
+    Backend -->|TypeORM| Database[(PostgreSQL 15<br/>:5432)]
+    
+    Backend -->|Health Check| Health[Health Check<br/>/healthz]
+    Backend -->|Métricas| Metrics[Prometheus<br/>/metrics]
+    Backend -->|Logs JSON| Logs[Logs Estruturados<br/>Pino]
+    
+    style User fill:#e1f5ff,stroke:#333,stroke-width:2px
+    style Frontend fill:#61dafb,stroke:#333,stroke-width:2px
+    style Backend fill:#e0234e,stroke:#333,stroke-width:2px
+    style Database fill:#336791,stroke:#333,stroke-width:2px
+    style Health fill:#90ee90,stroke:#333,stroke-width:2px
+    style Metrics fill:#ffa500,stroke:#333,stroke-width:2px
+    style Logs fill:#9370db,stroke:#333,stroke-width:2px
+```
 
-- **E2E Testing**
-  - `shop-e2e` - Playwright tests for the shop application
+### Fluxo de Dados
 
-## 🚀 Quick Start
+1. **Usuário** acessa a aplicação React no navegador
+2. **Frontend** faz requisições HTTP para o backend com autenticação JWT
+3. **Backend** processa requisições, valida dados e acessa o banco via TypeORM
+4. **PostgreSQL** armazena dados de forma persistente
+5. **Observabilidade** coleta logs, métricas e health checks para monitoramento
+
+## 🚀 Como Subir os Ambientes
+
+### Pré-requisitos
+
+- Node.js v20+ (recomendado LTS)
+- Docker e Docker Compose instalados
+- npm ou yarn instalado
+
+### Instalação Inicial
 
 ```bash
-# Clone the repository
-git clone <your-fork-url>
-cd <your-repository-name>
+# 1. Instalar todas as dependências
+npm install
 
-# Install dependencies
-npx install
-
-# Serve the React shop application (this will simultaneously serve the API backend)
-npx nx serve shop
-
-# ...or you can serve the API separately
-npx nx serve api
-
-# Build all projects
-npx nx run-many -t build
-
-# Run tests
-npx nx run-many -t test
-
-# Lint all projects
-npx nx run-many -t lint
-
-# Run e2e tests
-npx nx e2e shop-e2e
-
-# Run tasks in parallel
-
-npx nx run-many -t lint test build e2e --parallel=3
-
-# Visualize the project graph
-npx nx graph
+# 2. Os arquivos .env já estão criados em cada app
+# Se necessário, ajuste as variáveis em:
+# - apps/back-end/.env
+# - apps/front-end/.env
 ```
 
-## ⭐ Featured Nx Capabilities
+### 🐳 Opção 1: Docker Compose (Recomendado - Mais Simples)
 
-This repository showcases several powerful Nx features:
-
-### 1. 🔒 Module Boundaries
-
-Enforces architectural constraints using tags. Each project has specific dependencies it can use:
-
-- `scope:shared` - Can be used by all projects
-- `scope:shop` - Shop-specific libraries
-- `scope:api` - API-specific libraries
-- `type:feature` - Feature libraries
-- `type:data` - Data access libraries
-- `type:ui` - UI component libraries
-
-**Try it out:**
+#### Backend (PostgreSQL + API)
 
 ```bash
-# See the current project graph and boundaries
-npx nx graph
+# 1. Navegar para o diretório do backend
+cd apps/back-end
 
-# View a specific project's details
-npx nx show project shop --web
+# 2. Subir os serviços (PostgreSQL + Backend)
+docker-compose up -d
+
+# 3. Verificar se está rodando
+docker-compose ps
+
+# 4. Ver logs (opcional)
+docker-compose logs -f
 ```
 
-[Learn more about module boundaries →](https://nx.dev/features/enforce-module-boundaries)
+**Acessos Backend:**
+- API: http://localhost:3000/api
+- Swagger: http://localhost:3000/docs
+- Health Check: http://localhost:3000/healthz
+- Métricas: http://localhost:3000/metrics
 
-### 2. 🎭 Playwright E2E Testing
-
-End-to-end testing with Playwright is pre-configured:
+#### Frontend (Nginx)
 
 ```bash
-# Run e2e tests
-npx nx e2e shop-e2e
+# 1. Navegar para o diretório do frontend
+cd apps/front-end
 
-# Run e2e tests in CI mode
-npx nx e2e-ci shop-e2e
+# 2. Subir o serviço
+docker-compose up -d
+
+# 3. Verificar se está rodando
+docker-compose ps
 ```
 
-[Learn more about E2E testing →](https://nx.dev/technologies/test-tools/playwright/introduction#e2e-testing)
+**Acesso Frontend:**
+- Frontend: http://localhost:80 (ou porta configurada no `.env`)
 
-### 3. ⚡ Vitest for Unit Testing
-
-Fast unit testing with Vitest for React libraries:
+#### Parar os Serviços Docker
 
 ```bash
-# Test a specific library
-npx nx test shop-data
+# Backend
+cd apps/back-end
+docker-compose down
 
-# Test all projects
-npx nx run-many -t test
+# Frontend
+cd apps/front-end
+docker-compose down
 ```
 
-[Learn more about Vite testing →](https://nx.dev/recipes/vite)
+---
 
-### 4. 🔧 Self-Healing CI
+### 💻 Opção 2: Desenvolvimento Local (Sem Docker para Apps)
 
-The CI pipeline includes `nx fix-ci` which automatically identifies and suggests fixes for common issues:
+#### Passo 1: Subir o Banco de Dados (Docker)
 
 ```bash
-# In CI, this command provides automated fixes
-npx nx fix-ci
+# Apenas o PostgreSQL via Docker
+cd apps/back-end
+docker-compose up -d postgres
+
+# Verificar se está rodando
+docker-compose ps
 ```
 
-This feature helps maintain a healthy CI pipeline by automatically detecting and suggesting solutions for:
+#### Passo 2: Subir o Backend
 
-- Missing dependencies
-- Incorrect task configurations
-- Cache invalidation issues
-- Common build failures
+Em um terminal:
 
-[Learn more about self-healing CI →](https://nx.dev/ci/features/self-healing-ci)
+```bash
+# Na raiz do projeto
+npx nx serve back-end
+```
 
-## 📁 Project Structure
+O backend estará disponível em: http://localhost:3000/api
+
+#### Passo 3: Subir o Frontend
+
+Em outro terminal:
+
+```bash
+# Na raiz do projeto
+npx nx serve front-end
+```
+
+O frontend estará disponível em: http://localhost:5173
+
+---
+
+### 🎯 Opção 3: Usando Nx Run-Many (Tudo Junto)
+
+Subir Backend e Frontend em Paralelo:
+
+```bash
+# 1. Subir apenas o banco de dados
+cd apps/back-end
+docker-compose up -d postgres
+cd ../..
+
+# 2. Subir backend e frontend juntos
+npx nx run-many --target=serve --projects=back-end,front-end --parallel=2
+```
+
+Isso iniciará ambos os serviços simultaneamente.
+
+---
+
+### ✅ Verificar se Está Funcionando
+
+#### Backend
+
+```bash
+# Health Check
+curl http://localhost:3000/healthz
+
+# Deve retornar:
+# {"status":"ok","info":{...},"timestamp":"...","uptime":...}
+```
+
+#### Frontend
+
+Abra no navegador: http://localhost:5173 (dev) ou http://localhost:80 (Docker)
+
+---
+
+### 🔧 Troubleshooting
+
+#### Erro: Porta já em uso
+
+**Backend:**
+```bash
+# Altere a porta no apps/back-end/.env
+PORT=3001
+```
+
+**Frontend:**
+```bash
+# Altere a porta no apps/front-end/.env
+FRONTEND_PORT=8080
+```
+
+#### Erro: Banco de dados não conecta
+
+```bash
+# Verificar se o PostgreSQL está rodando
+cd apps/back-end
+docker-compose ps
+
+# Ver logs do PostgreSQL
+docker-compose logs postgres
+
+# Reiniciar o banco
+docker-compose restart postgres
+```
+
+#### Erro: Dependências não instaladas
+
+```bash
+# Na raiz do projeto
+npm install
+```
+
+#### Limpar tudo e recomeçar
+
+```bash
+# Parar todos os containers
+cd apps/back-end
+docker-compose down -v  # Remove volumes também
+
+cd ../front-end
+docker-compose down
+
+# Reinstalar dependências
+cd ../..
+npm install
+```
+
+---
+
+### 📝 Resumo Rápido
+
+#### Docker (Mais Simples)
+
+```bash
+# Terminal 1 - Backend
+cd apps/back-end
+docker-compose up -d
+
+# Terminal 2 - Frontend
+cd apps/front-end
+docker-compose up -d
+```
+
+#### Desenvolvimento Local
+
+```bash
+# Terminal 1 - Banco
+cd apps/back-end
+docker-compose up -d postgres
+cd ../..
+
+# Terminal 2 - Backend
+npx npx nx serve back-end
+
+# Terminal 3 - Frontend
+npx npx nx serve front-end
+```
+
+#### Tudo Junto (Nx)
+
+```bash
+# Terminal 1 - Banco
+cd apps/back-end
+docker-compose up -d postgres
+cd ../..
+
+# Terminal 2 - Backend + Frontend
+npx npx nx run-many --target=serve --projects=back-end,front-end --parallel=2
+```
+
+---
+
+### 🌐 URLs de Acesso
+
+| Serviço | URL | Descrição |
+|---------|-----|-----------|
+| Frontend (Dev) | http://localhost:5173 | Aplicação React |
+| Frontend (Docker) | http://localhost:80 | Aplicação React via Nginx |
+| Backend API | http://localhost:3000/api | API REST |
+| Swagger | http://localhost:3000/docs | Documentação da API |
+| Health Check | http://localhost:3000/healthz | Status da aplicação |
+| Métricas | http://localhost:3000/metrics | Métricas Prometheus |
+
+## 📦 Estrutura do Monorepo
 
 ```
+teddy-open-finance/
 ├── apps/
-│   ├── shop/           [scope:shop]    - React e-commerce app
-│   ├── shop-e2e/                       - E2E tests for shop
-│   └── api/            [scope:api]     - Backend API
-├── libs/
-│   ├── shop/
-│   │   ├── feature-products/        [scope:shop,type:feature] - Product listing
-│   │   ├── feature-product-detail/  [scope:shop,type:feature] - Product details
-│   │   ├── data/                    [scope:shop,type:data]    - Data access
-│   │   └── shared-ui/               [scope:shop,type:ui]      - UI components
-│   ├── api/
-│   │   └── products/    [scope:api]    - Product service
-│   └── shared/
-│       ├── models/      [scope:shared,type:data] - Shared models
-│       └── test-utils/  [scope:shared]           - Testing utilities
-├── nx.json             - Nx configuration
-├── tsconfig.json       - TypeScript configuration
-└── eslint.config.mjs   - ESLint with module boundary rules
+│   ├── back-end/          # API NestJS
+│   │   ├── docker-compose.yml  # PostgreSQL + Backend
+│   │   ├── Dockerfile          # Build da aplicação
+│   │   ├── .env.example       # Variáveis de ambiente
+│   │   └── README.md           # Documentação técnica
+│   ├── front-end/         # Aplicação React + Vite
+│   │   ├── docker-compose.yml  # Nginx servindo build
+│   │   ├── Dockerfile          # Build da aplicação
+│   │   ├── nginx.conf          # Configuração Nginx
+│   │   ├── .env.example        # Variáveis de ambiente
+│   │   └── README.md           # Documentação técnica
+│   └── ...
+├── libs/                  # Bibliotecas compartilhadas
+│   ├── api/               # Clientes de API
+│   ├── shared/            # Utilitários compartilhados
+│   └── shop/              # Módulos de e-commerce
+├── nx.json                # Configuração Nx
+├── package.json           # Dependências do workspace
+└── README.md              # Este arquivo
 ```
 
-## 🏷️ Understanding Tags
+## 🧪 Testes
 
-This repository uses tags to enforce module boundaries:
-
-| Project                 | Tags                         | Can Import From              |
-| ----------------------- | ---------------------------- | ---------------------------- |
-| `shop`                  | `scope:shop`                 | `scope:shop`, `scope:shared` |
-| `api`                   | `scope:api`                  | `scope:api`, `scope:shared`  |
-| `shop-feature-products` | `scope:shop`, `type:feature` | `scope:shop`, `scope:shared` |
-| `shop-data`             | `scope:shop`, `type:data`    | `scope:shared`               |
-| `models`                | `scope:shared`, `type:data`  | Nothing (base library)       |
-
-## 📚 Useful Commands
+### Executar Todos os Testes
 
 ```bash
-# Project exploration
-npx nx graph                                    # Interactive dependency graph
-npx nx list                                     # List installed plugins
-npx nx show project shop --web                 # View project details
+# Executar todos os testes do monorepo
+npx nx run-many --target=test --all
 
-# Development
-npx nx serve shop                              # Serve React app
-npx nx serve api                               # Serve backend API
-npx nx build shop                              # Build React app
-npx nx test shop-data                          # Test a specific library
-npx nx lint shop-feature-products              # Lint a specific library
-
-# Running multiple tasks
-npx nx run-many -t build                       # Build all projects
-npx nx run-many -t test --parallel=3          # Test in parallel
-npx nx run-many -t lint test build            # Run multiple targets
-
-# Affected commands (great for CI)
-npx nx affected -t build                       # Build only affected projects
-npx nx affected -t test                        # Test only affected projects
+# Executar testes de um projeto específico
+npx nx test back-end
+npx nx test front-end
 ```
 
-## 🎯 Adding New Features
+### Cobertura de Testes
 
-### Generate a new React application:
+O projeto possui **32 testes unitários passantes**:
+
+- **Backend:** 18 testes cobrindo serviços, DTOs e controllers
+- **Frontend:** 14 testes cobrindo componentes, hooks e páginas
+
+## 🔍 Observabilidade
+
+### Health Check (`/healthz`)
+
+Endpoint público que verifica a saúde da aplicação:
 
 ```bash
-npx nx g @nx/react:app my-app
+curl http://localhost:3000/healthz
 ```
 
-### Generate a new React library:
+**Verificações:**
+- ✅ Conectividade com PostgreSQL
+- ✅ Uso de memória heap (threshold: 150MB)
+- ✅ Uso de memória RSS (threshold: 300MB)
+
+**Resposta quando saudável:**
+```json
+{
+  "status": "ok",
+  "info": {
+    "database": { "status": "up" },
+    "memory_heap": { "status": "up" },
+    "memory_rss": { "status": "up" }
+  },
+  "timestamp": "2024-01-01T12:00:00.000Z",
+  "uptime": 3600.5
+}
+```
+
+### Logs Estruturados (JSON)
+
+Todos os logs são gerados em formato JSON estruturado usando `nestjs-pino`:
+
+- **Desenvolvimento:** Formatados com `pino-pretty` para legibilidade
+- **Produção:** JSON puro para integração com sistemas de log aggregation (ELK, Loki, CloudWatch)
+
+**Exemplo de log estruturado:**
+```json
+{
+  "level": 30,
+  "time": 1234567890,
+  "pid": 12345,
+  "req": {
+    "id": "req-123",
+    "method": "POST",
+    "url": "/api/auth/login"
+  },
+  "res": {
+    "statusCode": 200
+  },
+  "msg": "POST /api/auth/login - 200"
+}
+```
+
+### Métricas Prometheus (`/metrics`)
+
+Endpoint público que expõe métricas no formato Prometheus:
 
 ```bash
-npx nx g @nx/react:lib my-lib
+curl http://localhost:3000/metrics
 ```
 
-### Generate a new React component:
+**Métricas disponíveis:**
+- Métricas padrão do Node.js (CPU, memória, event loop lag)
+- Métricas HTTP (quando configurado)
+
+**Integração com Prometheus:**
+```yaml
+# prometheus.yml
+scrape_configs:
+  - job_name: 'teddy-backend'
+    scrape_interval: 15s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['localhost:3000']
+```
+
+## 🐳 Docker
+
+Cada aplicação possui seu próprio `docker-compose.yml` isolado:
+
+### Backend
 
 ```bash
-npx nx g @nx/react:component my-component --project=my-lib
+cd apps/back-end
+docker-compose up -d
 ```
 
-### Generate a new API library:
+Inicia PostgreSQL + Backend API.
+
+### Frontend
 
 ```bash
-npx nx g @nx/node:lib my-api-lib
+cd apps/front-end
+docker-compose up -d
 ```
 
-You can use `npx nx list` to see all available plugins and `npx nx list <plugin-name>` to see all generators for a specific plugin.
+Inicia Nginx servindo o build da aplicação React.
 
-## Nx Cloud
+## 📚 Documentação Técnica
 
-Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+Cada aplicação possui sua própria documentação técnica:
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- **[Backend README](apps/back-end/README.md)** - Documentação completa da API
+- **[Frontend README](apps/front-end/README.md)** - Documentação da aplicação React
 
-## Install Nx Console
+## 🛠️ Comandos Nx Úteis
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+```bash
+# Executar aplicações
+npx nx serve back-end
+npx nx serve front-end
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+# Build de produção
+npx nx build back-end
+npx nx build front-end
 
-## 🔗 Learn More
+# Executar testes
+npx nx test back-end
+npx nx test front-end
 
-- [Nx Documentation](https://nx.dev)
-- [React Monorepo Tutorial](https://nx.dev/getting-started/tutorials/react-monorepo-tutorial)
-- [Module Boundaries](https://nx.dev/features/enforce-module-boundaries)
-- [Docker Integration](https://nx.dev/recipes/nx-release/release-docker-images)
-- [Playwright Testing](https://nx.dev/technologies/test-tools/playwright/introduction#e2e-testing)
-- [Vite with React](https://nx.dev/recipes/vite)
-- [Nx Cloud](https://nx.dev/ci/intro/why-nx-cloud)
-- [Releasing Packages](https://nx.dev/features/manage-releases)
+# Linting
+npx nx lint back-end
+npx nx lint front-end
 
-## 💬 Community
+# Executar múltiplos projetos em paralelo
+npx npx nx run-many --target=serve --projects=back-end,front-end --parallel=2
+npx nx run-many --target=test --all
+npx nx run-many --target=build --all --prod
+```
 
-Join the Nx community:
+## 🔧 Tecnologias Principais
 
-- [Discord](https://go.nx.dev/community)
-- [X (Twitter)](https://twitter.com/nxdevtools)
-- [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [YouTube](https://www.youtube.com/@nxdevtools)
-- [Blog](https://nx.dev/blog)
+### Backend
+- **NestJS** - Framework Node.js progressivo
+- **TypeORM** - ORM para TypeScript/JavaScript
+- **PostgreSQL** - Banco de dados relacional
+- **Swagger** - Documentação da API
+- **Terminus** - Health checks
+- **nestjs-pino** - Logs estruturados em JSON
+- **prom-client** - Métricas Prometheus
+- **JWT** - Autenticação baseada em tokens
+
+### Frontend
+- **React 19** - Biblioteca JavaScript para interfaces
+- **Vite** - Build tool e dev server
+- **TypeScript** - Tipagem estática
+- **React Router** - Roteamento client-side
+- **Axios** - Cliente HTTP
+- **Recharts** - Gráficos e visualizações
+
+## 📝 Scripts Disponíveis
+
+```bash
+# Instalar dependências
+npm install
+
+# Executar testes E2E
+npm run test:e2e
+
+# Executar todos os testes
+npx nx run-many --target=test --all
+
+# Build de produção de todos os projetos
+npx nx run-many --target=build --all --prod
+```
+
+## 🤝 Contribuindo
+
+1. Crie uma branch a partir de `main`
+2. Faça suas alterações
+3. Execute os testes: `npx nx run-many --target=test --all`
+4. Submeta um pull request
+
+## 📄 Licença
+
+MIT
