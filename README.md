@@ -194,6 +194,17 @@ Abra no navegador: http://localhost:5173 (dev) ou http://localhost:80 (Docker)
 
 ---
 
+## 🔐 Credenciais de Acesso (MVP)
+
+Para facilitar a avaliação, o banco de dados é iniciado automaticamente com um usuário administrador:
+
+- **Usuário:** admin@teddy.com.br
+- **Senha:** admin123
+
+> **Nota:** Estas credenciais são geradas via script de Seed no primeiro carregamento da aplicação.
+
+---
+
 ### 🔧 Troubleshooting
 
 #### Erro: Porta já em uso
