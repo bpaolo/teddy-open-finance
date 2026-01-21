@@ -18,6 +18,7 @@ describe('ClientsService', () => {
     find: jest.Mock;
     findOne: jest.Mock;
     softDelete: jest.Mock;
+    increment: jest.Mock;
   };
 
   const createMockClient = (overrides: Partial<Client> = {}): Client => {
@@ -45,6 +46,7 @@ describe('ClientsService', () => {
       find: jest.fn(),
       findOne: jest.fn(),
       softDelete: jest.fn(),
+      increment: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -360,15 +362,19 @@ describe('ClientsService', () => {
         access_count: 0, // Garantir que sempre começa em 0
       });
 
-      // Mock do findOne retornando o cliente com access_count: 0
-      mockRepository.findOne.mockResolvedValue(mockClient);
-      
-      // Mock do save retornando o cliente com access_count incrementado para 1
-      const savedClient = createMockClient({
+      // Cliente após incremento
+      const updatedClient = createMockClient({
         id: clientId,
         access_count: 1, // Incrementado para 1
       });
-      mockRepository.save.mockResolvedValue(savedClient);
+
+      // Mock do primeiro findOne (verificação de existência)
+      mockRepository.findOne
+        .mockResolvedValueOnce(mockClient) // Primeira chamada: cliente existe
+        .mockResolvedValueOnce(updatedClient); // Segunda chamada: após incremento
+
+      // Mock do increment (operação SQL direta)
+      mockRepository.increment.mockResolvedValue(undefined);
 
       const result = await service.findOne(clientId);
 
@@ -376,62 +382,55 @@ describe('ClientsService', () => {
       expect(result).toBeDefined();
       expect(result.id).toBe(clientId);
       
-      // CRÍTICO: Verificar que access_count foi incrementado de 0 para 1 (não 7)
+      // CRÍTICO: Verificar que access_count foi incrementado de 0 para 1
       expect(result.access_count).toBe(1);
       expect(result.access_count).not.toBe(7);
       expect(result.access_count).not.toBe(0);
       
-      // Verificar que findOne foi chamado corretamente
-      expect(mockRepository.findOne).toHaveBeenCalledTimes(1);
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
+      // Verificar que findOne foi chamado duas vezes (verificação + busca após incremento)
+      expect(mockRepository.findOne).toHaveBeenCalledTimes(2);
+      expect(mockRepository.findOne).toHaveBeenNthCalledWith(1, {
+        where: { id: clientId },
+      });
+      expect(mockRepository.findOne).toHaveBeenNthCalledWith(2, {
         where: { id: clientId },
       });
       
-      // Verificar que save foi chamado com o cliente tendo access_count = 1
-      expect(mockRepository.save).toHaveBeenCalledTimes(1);
-      expect(mockRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({
-          id: clientId,
-          access_count: 1, // Garantir que é 1, não 7
-        })
+      // Verificar que increment foi chamado corretamente
+      expect(mockRepository.increment).toHaveBeenCalledTimes(1);
+      expect(mockRepository.increment).toHaveBeenCalledWith(
+        { id: clientId },
+        'access_count',
+        1
       );
+      
+      // Verificar que save NÃO foi chamado (usamos increment em vez de save)
+      expect(mockRepository.save).not.toHaveBeenCalled();
     });
 
-    it('deve incrementar access_count e atualizar updatedAt ao buscar um cliente', async () => {
-      // Fake Timers já está configurado no beforeEach
+    it('deve incrementar access_count ao buscar um cliente', async () => {
       const clientId = '123e4567-e89b-12d3-a456-426614174000';
       const initialAccessCount = 5;
       
-      // Criar data inicial com timestamp fixo
-      const initialUpdatedAt = new Date('2024-01-01T10:00:00.000Z');
-      jest.setSystemTime(initialUpdatedAt);
-
-      // Criar cliente limpo com access_count: 5 e updatedAt inicial
+      // Criar cliente inicial com access_count: 5
       const mockClient = createMockClient({
         id: clientId,
         access_count: initialAccessCount,
-        updatedAt: initialUpdatedAt,
       });
 
-      mockRepository.findOne.mockResolvedValue(mockClient);
-      
-      // Avançar o tempo em 1000ms para garantir que updatedAt será diferente
-      jest.advanceTimersByTime(1000);
-      
-      // Criar nova data após avanço do tempo
-      const newUpdatedAt = new Date(); // Agora será 1 segundo depois (1000ms depois)
-      
-      // Mock do save: o serviço já incrementou access_count antes de chamar save
-      // Então o cliente que chega no save já tem access_count = 6 (5 + 1)
-      // O TypeORM atualiza o updatedAt automaticamente
-      mockRepository.save.mockImplementation(async (client) => {
-        // Simular que o TypeORM retorna o cliente com updatedAt atualizado
-        // O client já vem com access_count incrementado pelo serviço
-        return {
-          ...client,
-          updatedAt: newUpdatedAt, // TypeORM atualiza automaticamente
-        };
+      // Cliente após incremento
+      const updatedClient = createMockClient({
+        id: clientId,
+        access_count: initialAccessCount + 1, // Incrementado para 6
       });
+
+      // Mock do primeiro findOne (verificação de existência)
+      mockRepository.findOne
+        .mockResolvedValueOnce(mockClient) // Primeira chamada: cliente existe
+        .mockResolvedValueOnce(updatedClient); // Segunda chamada: após incremento
+
+      // Mock do increment (operação SQL direta)
+      mockRepository.increment.mockResolvedValue(undefined);
 
       const result = await service.findOne(clientId);
 
@@ -439,27 +438,19 @@ describe('ClientsService', () => {
       expect(result.access_count).toBe(6);
       expect(result.access_count).toBe(initialAccessCount + 1);
       
-      // CRÍTICO: Verificar que updatedAt foi atualizado (ALTERNATIVA SIMPLES)
-      // Verificar que o método save foi chamado com um objeto que possui uma data válida
-      expect(mockRepository.save).toHaveBeenCalledTimes(1);
-      const savedCall = mockRepository.save.mock.calls[0][0];
-      expect(savedCall).toBeDefined();
-      expect(savedCall.access_count).toBe(6);
-      expect(savedCall.updatedAt).toBeDefined();
-      expect(savedCall.updatedAt instanceof Date).toBe(true);
-      
-      // Verificar que o resultado tem updatedAt válido
-      expect(result.updatedAt).toBeDefined();
-      expect(result.updatedAt instanceof Date).toBe(true);
-      
-      // Verificar que updatedAt é diferente (maior que) o initialUpdatedAt
-      // Usar toBeGreaterThanOrEqual para evitar problemas de milissegundos
-      expect(result.updatedAt.getTime()).toBeGreaterThanOrEqual(
-        initialUpdatedAt.getTime()
+      // Verificar que increment foi chamado corretamente
+      expect(mockRepository.increment).toHaveBeenCalledTimes(1);
+      expect(mockRepository.increment).toHaveBeenCalledWith(
+        { id: clientId },
+        'access_count',
+        1
       );
       
-      // Restaurar timers reais após o teste
-      jest.useRealTimers();
+      // Verificar que findOne foi chamado duas vezes
+      expect(mockRepository.findOne).toHaveBeenCalledTimes(2);
+      
+      // Verificar que save NÃO foi chamado (usamos increment em vez de save)
+      expect(mockRepository.save).not.toHaveBeenCalled();
     });
 
     it('deve lançar NotFoundException se o cliente não for encontrado', async () => {
@@ -475,6 +466,8 @@ describe('ClientsService', () => {
         `Cliente com ID ${clientId} não encontrado`
       );
       
+      // Verificar que increment não foi chamado (cliente não existe)
+      expect(mockRepository.increment).not.toHaveBeenCalled();
       // Verificar que save não foi chamado
       expect(mockRepository.save).not.toHaveBeenCalled();
     });

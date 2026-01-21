@@ -40,7 +40,9 @@ export const ClientDetails: React.FC = () => {
 
         // Limpar o lock após a requisição completar (sucesso ou erro)
         requestPromise
-          .catch(() => {}) // Ignorar erros aqui, serão tratados abaixo
+          .catch(() => {
+            // Erros serão tratados no catch abaixo, apenas ignorar aqui
+          })
           .finally(() => {
             // Só remover se ainda for a mesma requisição
             if (requestLocks.get(id) === requestPromise) {

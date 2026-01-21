@@ -66,7 +66,6 @@ describe('Login', () => {
     const user = userEvent.setup();
     renderLogin();
 
-    const emailInput = screen.getByPlaceholderText('Digite o seu email');
     const passwordInput = screen.getByPlaceholderText('Digite a sua senha');
     const submitButton = screen.getByRole('button', { name: /entrar/i });
 

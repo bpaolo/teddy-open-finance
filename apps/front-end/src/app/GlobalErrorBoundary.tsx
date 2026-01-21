@@ -27,7 +27,7 @@ export class GlobalErrorBoundary extends Component<
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // In production this can be wired to an observability tool (Sentry, Datadog, etc.)
     // For this MVP we rely on the backend logs and browser console.
-    // eslint-disable-next-line no-console
+     
     console.error('Global React error boundary caught an error', {
       error,
       errorInfo,

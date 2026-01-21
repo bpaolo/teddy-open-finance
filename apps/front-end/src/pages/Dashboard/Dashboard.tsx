@@ -49,13 +49,6 @@ export const Dashboard: React.FC = () => {
     setCurrentPage(1);
   }, [itemsPerPage, showSelected]);
 
-  const handleViewClient = async (client: Client) => {
-    const updated = await viewClient(client.id);
-    if (updated) {
-      await refreshClients();
-    }
-  };
-
   const handleEditClient = (client: Client) => {
     setEditClient(client);
   };

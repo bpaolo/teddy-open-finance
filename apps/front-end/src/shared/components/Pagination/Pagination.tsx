@@ -21,9 +21,6 @@ export const Pagination: React.FC<PaginationProps> = ({
   onItemsPerPageChange,
   itemsPerPageOptions = [10, 20, 50, 100],
 }) => {
-  const startItem = (currentPage - 1) * itemsPerPage + 1;
-  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-
   const getPageNumbers = () => {
     const pageNumbers: (number | string)[] = [];
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { BrowserRouter } from 'react-router-dom';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ClientCard } from './ClientCard';
 import { Client } from '../../../types/client.types';
 
@@ -24,8 +25,12 @@ describe('ClientCard', () => {
     vi.clearAllMocks();
   });
 
+  const renderWithRouter = (component: React.ReactElement) => {
+    return render(<BrowserRouter>{component}</BrowserRouter>);
+  };
+
   it('deve exibir o nome do cliente corretamente', () => {
-    render(
+    renderWithRouter(
       <ClientCard
         client={mockClient}
         onEdit={mockOnEdit}
@@ -39,7 +44,7 @@ describe('ClientCard', () => {
   });
 
   it('deve exibir o email do cliente corretamente', () => {
-    render(
+    renderWithRouter(
       <ClientCard
         client={mockClient}
         onEdit={mockOnEdit}
@@ -53,7 +58,7 @@ describe('ClientCard', () => {
   });
 
   it('deve exibir o telefone do cliente corretamente', () => {
-    render(
+    renderWithRouter(
       <ClientCard
         client={mockClient}
         onEdit={mockOnEdit}
@@ -67,7 +72,7 @@ describe('ClientCard', () => {
   });
 
   it('deve exibir todos os dados do cliente (Nome, Email, Telefone) na tela', () => {
-    render(
+    renderWithRouter(
       <ClientCard
         client={mockClient}
         onEdit={mockOnEdit}
@@ -87,7 +92,7 @@ describe('ClientCard', () => {
       email: '',
     };
 
-    render(
+    renderWithRouter(
       <ClientCard
         client={clientSemEmail}
         onEdit={mockOnEdit}
@@ -105,7 +110,7 @@ describe('ClientCard', () => {
       telefone: '',
     };
 
-    render(
+    renderWithRouter(
       <ClientCard
         client={clientSemTelefone}
         onEdit={mockOnEdit}
@@ -118,7 +123,7 @@ describe('ClientCard', () => {
   });
 
   it('deve chamar onEdit quando o botão de editar é clicado', () => {
-    render(
+    renderWithRouter(
       <ClientCard
         client={mockClient}
         onEdit={mockOnEdit}
@@ -134,7 +139,7 @@ describe('ClientCard', () => {
   });
 
   it('deve chamar onDelete quando o botão de deletar é clicado', () => {
-    render(
+    renderWithRouter(
       <ClientCard
         client={mockClient}
         onEdit={mockOnEdit}
@@ -149,8 +154,8 @@ describe('ClientCard', () => {
     expect(mockOnDelete).toHaveBeenCalledWith(mockClient.id);
   });
 
-  it('deve chamar onSelect quando o botão de selecionar é clicado', () => {
-    render(
+  it('deve chamar onSelect quando o checkbox de selecionar é clicado', () => {
+    renderWithRouter(
       <ClientCard
         client={mockClient}
         onEdit={mockOnEdit}
@@ -159,8 +164,8 @@ describe('ClientCard', () => {
       />
     );
 
-    const selectButton = screen.getByTitle('Adicionar aos selecionados');
-    selectButton.click();
+    const selectCheckbox = screen.getByLabelText(`Selecionar ${mockClient.nome}`);
+    selectCheckbox.click();
 
     expect(mockOnSelect).toHaveBeenCalledTimes(1);
     expect(mockOnSelect).toHaveBeenCalledWith(mockClient);
